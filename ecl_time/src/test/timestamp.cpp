@@ -25,6 +25,16 @@
 
 using ecl::TimeStamp;
 
+/*****************************************************************************
+** Variables
+*****************************************************************************/
+
+bool verbose = true;
+
+/*****************************************************************************
+** Tests
+*****************************************************************************/
+
 TEST(TimeStampTests,construction) {
     TimeStamp time;
     SUCCEED();
@@ -103,10 +113,93 @@ TEST(TimeStampTests,mathematicalOperators) {
 }
 
 TEST(TimeStampTests,negatives) {
-    TimeStamp time(-1.7);
-    std::cout << "Time(-1.7): " << time << std::endl;
-    EXPECT_EQ(-1,time.sec());
-    EXPECT_EQ(-700000000,time.nsec());
+  std::vector<TimeStamp> timestamps = { TimeStamp(1.7),
+                                        TimeStamp(0.7),
+                                        TimeStamp(-0.7),
+                                        TimeStamp(-1.7),
+  };
+  if ( verbose ) {
+    std::cout << "Stream Operator: ";
+    for ( const TimeStamp& timestamp : timestamps) {
+      std::cout << timestamp << " ";
+    }
+    std::cout << std::endl;
+  }
+  EXPECT_EQ(1, timestamps[0].sec());
+  EXPECT_EQ(700000000, timestamps[0].nsec());
+  EXPECT_EQ(0, timestamps[1].sec());
+  EXPECT_EQ(700000000, timestamps[1].nsec());
+  EXPECT_EQ(0, timestamps[2].sec());
+  EXPECT_EQ(-700000000, timestamps[2].nsec());
+  EXPECT_EQ(-1, timestamps[3].sec());
+  EXPECT_EQ(-700000000, timestamps[3].nsec());
+
+  std::vector<float> double_representations;
+  for ( const TimeStamp& timestamp : timestamps) {
+    double_representations.push_back(timestamp);
+  }
+  if ( verbose ) {
+    std::cout << "Doubles: ";
+    for ( const float& d : double_representations ) {
+      std::cout << d << " ";
+    }
+    std::cout << std::endl;
+  }
+  EXPECT_FLOAT_EQ(1.7, double_representations[0]);
+  EXPECT_FLOAT_EQ(0.7, double_representations[1]);
+  EXPECT_FLOAT_EQ(-0.7, double_representations[2]);
+  EXPECT_FLOAT_EQ(-1.7, double_representations[3]);
+  double_representations.clear();
+  double_representations.push_back(ecl::TimeStamp(1.3) - ecl::TimeStamp(5.1));
+  double_representations.push_back(ecl::TimeStamp(1.3) - ecl::TimeStamp(5.8));
+  double_representations.push_back(ecl::TimeStamp(1.3) - ecl::TimeStamp(1.5));
+  double_representations.push_back(ecl::TimeStamp(-1.3) - ecl::TimeStamp(1.5));
+  double_representations.push_back(ecl::TimeStamp(-1.3) - ecl::TimeStamp(-0.8));
+  double_representations.push_back(ecl::TimeStamp(-1.3) - ecl::TimeStamp(-5.8));
+  if ( verbose ) {
+    std::cout << "Differences: ";
+    std::cout << (ecl::TimeStamp(1.3) - ecl::TimeStamp(5.1)) << " ";
+    std::cout << (ecl::TimeStamp(1.3) - ecl::TimeStamp(5.8)) << " ";
+    std::cout << (ecl::TimeStamp(1.3) - ecl::TimeStamp(1.5)) << " ";
+    std::cout << (ecl::TimeStamp(-1.3) - ecl::TimeStamp(1.5)) << " ";
+    std::cout << (ecl::TimeStamp(-1.3) - ecl::TimeStamp(-0.8)) << " ";
+    std::cout << (ecl::TimeStamp(-1.3) - ecl::TimeStamp(-5.8)) << " ";
+    std::cout << std::endl;
+  }
+  EXPECT_FLOAT_EQ(-3.8, double_representations[0]);
+  EXPECT_FLOAT_EQ(-4.5, double_representations[1]);
+  EXPECT_FLOAT_EQ(-0.2, double_representations[2]);
+  EXPECT_FLOAT_EQ(-2.8, double_representations[3]);
+  EXPECT_FLOAT_EQ(-0.5, double_representations[4]);
+  EXPECT_FLOAT_EQ(4.5, double_representations[5]);
+
+  double_representations.clear();
+  ecl::TimeStamp t, time1_3(1.3), time1_3_bd(-1.3);
+  t = time1_3; t -= ecl::TimeStamp(5.1);
+  double_representations.push_back(t);
+  t = time1_3; t -= ecl::TimeStamp(5.8);
+  double_representations.push_back(t);
+  t = time1_3; t -= ecl::TimeStamp(1.5);
+  double_representations.push_back(t);
+  t = time1_3_bd; t -= ecl::TimeStamp(1.5);
+  double_representations.push_back(t);
+  t = time1_3_bd; t -= ecl::TimeStamp(-0.8);
+  double_representations.push_back(t);
+  t = time1_3_bd; t -= ecl::TimeStamp(-5.8);
+  double_representations.push_back(t);
+  if ( verbose ) {
+    std::cout << "Differences: ";
+    for (const double& d : double_representations) {
+      std::cout << d << " ";
+    }
+    std::cout << std::endl;
+  }
+  EXPECT_FLOAT_EQ(-3.8, double_representations[0]);
+  EXPECT_FLOAT_EQ(-4.5, double_representations[1]);
+  EXPECT_FLOAT_EQ(-0.2, double_representations[2]);
+  EXPECT_FLOAT_EQ(-2.8, double_representations[3]);
+  EXPECT_FLOAT_EQ(-0.5, double_representations[4]);
+  EXPECT_FLOAT_EQ(4.5, double_representations[5]);
 }
 
 #endif /* ECL_HAS_TIMESTAMP */
