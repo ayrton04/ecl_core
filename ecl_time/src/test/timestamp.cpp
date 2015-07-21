@@ -102,6 +102,13 @@ TEST(TimeStampTests,mathematicalOperators) {
     EXPECT_EQ(200000000,time.nsec());
 }
 
+TEST(TimeStampTests,negatives) {
+    TimeStamp time(-1.7);
+    std::cout << "Time(-1.7): " << time << std::endl;
+    EXPECT_EQ(-1,time.sec());
+    EXPECT_EQ(-700000000,time.nsec());
+}
+
 #endif /* ECL_HAS_TIMESTAMP */
 
 /*****************************************************************************
@@ -109,6 +116,13 @@ TEST(TimeStampTests,mathematicalOperators) {
 *****************************************************************************/
 
 int main(int argc, char **argv) {
+
+  ecl::TimeStamp time1(1437453731.8);
+  ecl::TimeStamp time2(1437453731.1);
+  ecl::TimeStamp diff12 = time1 - time2;
+  std::cout << "Diff12 : " << diff12 << std::endl;
+  ecl::TimeStamp diff21 = time2 - time1;
+  std::cout << "Diff21 : " << diff21 << std::endl;
 
 //	TimeStamp time;
 //	std::cout << time << std::endl;

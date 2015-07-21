@@ -13,7 +13,7 @@
 #include <ecl/config.hpp>
 #include <ecl/exceptions/standard_exception.hpp>
 #include "../../include/ecl/time/timestamp_base.hpp"
-
+#include <iostream>
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
@@ -159,11 +159,24 @@ TimeStampBase TimeStampBase::operator-(const TimeStampBase& time_stamp ) ecl_ass
     time_t sec = time.tv_sec - time_stamp.time.tv_sec;
     long nsec = time.tv_nsec - time_stamp.time.tv_nsec;
 
-    ecl_assert_throw( ( ( sec > 0 ) || ((sec == 0) && (nsec >= 0)) ), StandardException(LOC,InvalidInputError,"Timestamps must always be positive (design requirement), possibly you have your timestamps in the wrong order.") );
+    std::cout << "  this:" << std::endl;
+    std::cout << "    sec : " << time.tv_sec << std::endl;
+    std::cout << "    nsec: " << time.tv_nsec << std::endl;
+    std::cout << "  that:" << std::endl;
+    std::cout << "    sec : " << time_stamp.time.tv_sec << std::endl;
+    std::cout << "    nsec: " << time_stamp.time.tv_nsec << std::endl;
+    std::cout << "  diff:" << std::endl;
+    std::cout << "    sec : " << sec << std::endl;
+    std::cout << "    nsec: " << nsec << std::endl;
+    std::cout << "  assert: " << (( ( sec > 0 ) || ((sec == 0) && (nsec >= 0)) ) ? std::string("true") : std::string("false")) << std::endl;
+    //ecl_assert_throw( ( ( sec > 0 ) || ((sec == 0) && (nsec >= 0)) ), StandardException(LOC,InvalidInputError,"Timestamps must always be positive (design requirement), possibly you have your timestamps in the wrong order.") );
 
-    if ( nsec < 0 ) {
+    if ( (sec > 0) && ( nsec < 0 )) {
         sec -= 1;
         nsec += 1000000000L;
+    } else if ( (sec < 0) && ( nsec > 0 )) {
+      sec += 1;
+      nsec -= 1000000000L;
     }
     return TimeStampBase(sec,nsec);
 }
