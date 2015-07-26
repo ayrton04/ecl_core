@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 
     try {
         CmdLine cmd("Calculator for yaw to quaternion.",' ',"0.1");
-        UnlabeledValueArg<double> arg_yaw("yaw","Yaw angle to convert",true,0.0,"float", cmd);
+        UnlabeledValueArg<double> arg_yaw("yaw","Yaw angle to convert (radians)",true,0.0,"float", cmd);
         cmd.parse(argc,argv);
         yaw = arg_yaw.getValue();
     } catch ( ArgException &e ) {

@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <ecl/command_line.hpp>
+#include <ecl/geometry/angle.hpp>
 #include <ecl/linear_algebra.hpp>
 #include <ecl/math.hpp>
 
@@ -49,10 +50,19 @@ int main(int argc, char** argv) {
     if ( ( x != 0.0 ) && ( y != 0.0 ) ) {
       std::cout << "This quaternion has non-yaw components, aborting." << std::endl;
     }
-    double rads = 2*acos(w);
-    double degrees = rads * 360.0 / (2 * ecl::pi);
+
+    // Cases derived from https://orbitalstation.wordpress.com/tag/quaternion/
+    double sarg = -2 * (x*z - w*y) / (x*x + y*y + z*z + w*w);
+    double rads;
+    if (sarg <= -0.99999) {
+      rads   = -2 * atan2(y, x);
+    } else if (sarg >= 0.99999) {
+      rads   = 2 * atan2(y, x);
+    } else {
+      rads   = atan2(2 * (x*y + w*z), w*w + x*x - y*y - z*z);
+    }
     std::cout << "Quaternion {" << x << ", " << y << ", " << z << ", " << w << "} -> ";
-    std::cout << rads << " radians -> " << degrees << " degrees." << std::endl;
+    std::cout << rads << " radians -> " << ecl::radians_to_degrees(rads) << " degrees." << std::endl;
 
     return 0;
 }
